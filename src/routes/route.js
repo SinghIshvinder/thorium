@@ -86,3 +86,4 @@ router.post("/players/:playerName/bookings/:bookingId", function (req, res) {
 });
 
 module.exports = router;
+
