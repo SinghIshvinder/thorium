@@ -2,10 +2,10 @@ const mongoose = require("mongoose");
 const { required } = require("nodemon/lib/config");
 
 const bookSchema = new mongoose.Schema({
-  bookName: String,
-  authorName: String,
-  category: String,
-  year: Number,
+  bookName: {type:String, required:true},
+  year: {type: String, default:"2021"},
+  price:{inrPrice: String, eurPrice: String},
+  tags:[{authorName: String, totalPages: Number, stockAvailable:Boolean}]
   
 },{ timestamps:true });
 
