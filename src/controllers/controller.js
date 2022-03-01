@@ -15,7 +15,7 @@ const bookList = async function(req, res){
 }
 
 const getBooksInYear = async function(req, res){
-    let allBooks = await userModel.find({year:"2021"});
+    let allBooks = await userModel.find({year: req.body.year});
     res.send({msg: allBooks});
 }
 
@@ -30,7 +30,7 @@ const getRandomBooks = async function(req, res){
 
 }
 const getParticularBooks = async function(req,res){
-    let booksInYear = await userModel.find({year: req.body});
+    let ParticularBooks= await userModel.find(req.body);
     res.send({msg : ParticularBooks});
 }
 
