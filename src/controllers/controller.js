@@ -41,7 +41,23 @@ const getBooks = async function (req, res) {
   res.send({ data: books });
 };
 
+const putBooks = async function(req,res){
+  const pId = await bookModel.find().populate('publisher').select({publisher: 1,_id: 0}); 
+  console.log(pId);
+
+  // res.send({data: bookLink});
+
+}
+const increasePrice = async function(req, res){
+  const data = await bookModel.updateMany({ratings:{$gt:3.5}},{$inc:{price: +10}});
+  res.send({msg: "Price Change Successful. Check DB for updated prices."});
+
+}
+
+
 module.exports.createAuthor = createAuthor;
 module.exports.createPublisher = createPublisher;
 module.exports.createBook = createBook;
 module.exports.getBooks = getBooks;
+module.exports.putBooks = putBooks;
+module.exports.increasePrice = increasePrice;

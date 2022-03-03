@@ -3,7 +3,7 @@ const bodyParser = require('body-parser');
 const route = require('./routes/route.js');
 const app = express();
 const mongoose = require('mongoose');
-mongoose.connect('mongodb://0.0.0.0:27017/BookAssignment' , 
+mongoose.connect('mongodb://0.0.0.0:27017/Assignments' , 
 {useNewUrlParser: true, useUnifiedTopology:true}).then(() => console.log("connection successful"))
 .catch((err) => console.log('eror', err));
 app.use(bodyParser.json());
