@@ -3,10 +3,10 @@ const { required } = require("nodemon/lib/config");
 
 const authorSchema = new mongoose.Schema(
   {
-   authorName: { type: String, required: true },
+    authorName: { type: String, required: true },
     age: Number,
     address: String,
-    ratings: Number
+    ratings: Number,
   },
   { timestamps: true }
 );

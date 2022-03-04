@@ -41,19 +41,27 @@ const getBooks = async function (req, res) {
   res.send({ data: books });
 };
 
-const putBooks = async function(req,res){
-  const pId = await bookModel.find().populate('publisher').select({publisher: 1,_id: 0}); 
-  console.log(pId);
-
-  // res.send({data: bookLink});
-
-}
-const increasePrice = async function(req, res){
-  const data = await bookModel.updateMany({ratings:{$gt:3.5}},{$inc:{price: +10}});
-  res.send({msg: "Price Change Successful. Check DB for updated prices."});
-
-}
-
+const putBooks = async function (req, res) {
+  let hardCoverPublishers = await publisherModel.find({
+    name: { $in: ["Penguin Pulishings", "Harper Collins Publishers"] },
+  });
+  let pId = hardCoverPublishers.map((p) => p._id);
+  await bookModel.updateMany(
+    { publisher: { $in: pId } },
+    { isHardCover: true }
+  );
+  let newList = await bookModel
+    .find()
+    .select({ name: 1, publisher: 1, isHardCover: 1 });
+  res.send({ msg: newList });
+};
+const increasePrice = async function (req, res) {
+  const data = await bookModel.updateMany(
+    { ratings: { $gt: 3.5 } },
+    { $inc: { price: +10 } }
+  );
+  res.send({ msg: "Price Change Successful. Check DB for updated prices." });
+};
 
 module.exports.createAuthor = createAuthor;
 module.exports.createPublisher = createPublisher;
