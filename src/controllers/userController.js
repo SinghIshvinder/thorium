@@ -32,17 +32,17 @@ const loginUser = async function (req, res) {
 };
 
 const getUserData = async function (req, res) {
-  let token = req.headers["x-Auth-token"];
-  if (!token) token = req.headers["x-auth-token"];
-  //token verification for the one we created above
-  let decodedToken = jwt.verify(token, "functionup-thorium");
-  if (!decodedToken)
-    return res.send({ status: false, msg: "token is invalid" });
-    let user = req.params.userId;
-    let userToBeModified = req.params.userId;
-    let userLoggedIn = decodedToken.userId;
-    if(userToBeModified != userLoggedIn) return res.send({status:false, msg:"User not logged in. Can't perform this action!"});
-    if(!user) return res.send({status:false, msg:"User not found"});  
+  // let token = req.headers["x-Auth-token"];
+  // if (!token) token = req.headers["x-auth-token"];
+  // //token verification for the one we created above
+  // let decodedToken = jwt.verify(token, "functionup-thorium");
+  // if (!decodedToken)
+  //   return res.send({ status: false, msg: "token is invalid" });
+  //   let user = req.params.userId;
+  //   let userToBeModified = req.params.userId;
+  //   let userLoggedIn = decodedToken.userId;
+  //   if(userToBeModified != userLoggedIn) return res.send({status:false, msg:"User not logged in. Can't perform this action!"});
+  //   if(!user) return res.send({status:false, msg:"User not found"});  
 
   let userId = req.params.userId;
   let userDetails = await userModel.findById(userId);
@@ -85,15 +85,15 @@ const deleteStatusUpdate = async (req, res) => {
 
 const createPost = async (req, res)=>{
   let message = req.body.message;
-  let token = req.headers["x-auth-token"];
-  if(!token) return res.send({status: false, msg: "token must be present in the request header"});
-  let decodedToken = jwt.verify(token, 'functionup-thorium');
-  if(!decodedToken) return res.send({status: false, msg:"token is not valid"});
-  let userToBeModified = req.params.userId;
-  let userLoggedIn = decodedToken.userId;
-  if(userToBeModified != userLoggedIn) return res.send({status:false, msg:"User not logged in. Can't perform this action!"});
+  // let token = req.headers["x-auth-token"];
+  // if(!token) return res.send({status: false, msg: "token must be present in the request header"});
+  // let decodedToken = jwt.verify(token, 'functionup-thorium');
+  // if(!decodedToken) return res.send({status: false, msg:"token is not valid"});
+  // let userToBeModified = req.params.userId;
+  // let userLoggedIn = decodedToken.userId;
+  // if(userToBeModified != userLoggedIn) return res.send({status:false, msg:"User not logged in. Can't perform this action!"});
   let user = await userModel.findById(req.params.userId);
-  if(!user) return res.send({status:false, msg:"User not found"});
+  // if(!user) return res.send({status:false, msg:"User not found"});
   let updatedPost = user.posts;
   updatedPost.push(message);
   let updatedUser = await userModel.findOneAndUpdate({_id:user._id},{posts:updatedPost});
