@@ -12,7 +12,7 @@ const loginUser = async function (req, res) {
   let userName = req.body.emailId;
   let password = req.body.password;
 
-  let user = await userModel.findOne({ emailId: userName, password: password });
+  let user = await userModel.findOne({ emailId: userName, password: password});
   if (!user)
     return res.send({
       status: false,
@@ -34,12 +34,15 @@ const loginUser = async function (req, res) {
 const getUserData = async function (req, res) {
   let token = req.headers["x-Auth-token"];
   if (!token) token = req.headers["x-auth-token"];
-
-  console.log(token);
-
+  //token verification for the one we created above
   let decodedToken = jwt.verify(token, "functionup-thorium");
   if (!decodedToken)
     return res.send({ status: false, msg: "token is invalid" });
+    let user = req.params.userId;
+    let userToBeModified = req.params.userId;
+    let userLoggedIn = decodedToken.userId;
+    if(userToBeModified != userLoggedIn) return res.send({status:false, msg:"User not logged in. Can't perform this action!"});
+    if(!user) return res.send({status:false, msg:"User not found"});  
 
   let userId = req.params.userId;
   let userDetails = await userModel.findById(userId);
@@ -51,28 +54,57 @@ const getUserData = async function (req, res) {
 
 const updateUser = async function (req, res) {
   let userId = req.params.userId;
-  let user = await userModel.findById(userId);
+  let user = await userModel.findById(req.params.userId);
   if (!user) {
     return res.send("No such user exists");
   }
+  let token = req.headers["x-auth-token"]; //expecting a header token in postman body.
+  // if (!token) return res.send({ status: false, msg: "token must be present" });
+  let decodedToken = jwt.verify(token, 'functionup-thorium');
+  if(!decodedToken) return res.send({status: false, msg:"token is not valid"});
+  let userToBeModified = req.params.userId;
+  let userLoggedIn = decodedToken.userId;
+  if(userToBeModified != userLoggedIn) return res.send({status:false, msg:"User not logged in. Can't perform this action!"});
+  if(!user) return res.send({status:false, msg:"User not found"});
 
   let userData = req.body;
   let updatedUser = await userModel.findOneAndUpdate({ _id: userId }, userData);
-  res.send({ status: updatedUser, data: updatedUser });
+  res.send({ status: true, data: updatedUser });
 };
 
 const deleteStatusUpdate = async (req, res) => {
   let userId = req.params.userId;
-  let user = await userModel.findById(userId);
+  let user = await userModel.findById(userId); //find the value that I inserted!
   if (!user) {
     return res.send("Invalid User ID!");
   }
   let changeState = await userModel.updateMany({ isDeleted: true });
   res.send("isDeleted changed to 'true'! Check DB.");
+  //res.send({data: changeState});
 };
+
+const createPost = async (req, res)=>{
+  let message = req.body.message;
+  let token = req.headers["x-auth-token"];
+  if(!token) return res.send({status: false, msg: "token must be present in the request header"});
+  let decodedToken = jwt.verify(token, 'functionup-thorium');
+  if(!decodedToken) return res.send({status: false, msg:"token is not valid"});
+  let userToBeModified = req.params.userId;
+  let userLoggedIn = decodedToken.userId;
+  if(userToBeModified != userLoggedIn) return res.send({status:false, msg:"User not logged in. Can't perform this action!"});
+  let user = await userModel.findById(req.params.userId);
+  if(!user) return res.send({status:false, msg:"User not found"});
+  let updatedPost = user.posts;
+  updatedPost.push(message);
+  let updatedUser = await userModel.findOneAndUpdate({_id:user._id},{posts:updatedPost});
+  res.send({status:true, data:updatedUser});
+
+
+}
 
 module.exports.createUser = createUser;
 module.exports.getUserData = getUserData;
 module.exports.updateUser = updateUser;
 module.exports.loginUser = loginUser;
 module.exports.deleteStatusUpdate = deleteStatusUpdate;
+module.exports.createPost = createPost;
